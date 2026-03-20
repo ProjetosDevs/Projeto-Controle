@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Mensal de Gastos</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Login Section -->
+    <section id="login-view" class="view active">
+        <div class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <i class="fa-solid fa-chart-pie login-logo"></i>
+                    <h2>Controle Financeiro</h2>
+                    <p>Faça login para gerenciar as despesas</p>
+                </div>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="username">Usuário</label>
+                        <input type="text" id="username" placeholder="Digite seu usuário..." required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" placeholder="Digite sua senha..." required>
+                    </div>
+                    <div class="input-group">
+                        <label for="role">Tipo de Acesso (Simulação)</label>
+                        <select id="role">
+                            <option value="admin">Administrador</option>
+                            <option value="financeiro">Financeiro</option>
+                            <option value="gestor">Gestor (Apenas Leitura)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Entrar <i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+            </div>
+            <div class="login-bg"></div>
+        </div>
+    </section>
+
+    <!-- App Main Layout -->
+    <section id="app-view" class="view">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Financeiro Corp</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-target="expenses">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Despesas</span>
+                </a>
+                <a href="#" class="nav-item" data-target="reports">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Relatórios de Faturamento</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="user-details">
+                        <span id="current-user-name">Admin</span>
+                        <span id="current-user-role">Administrador</span>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn-logout"><i class="fa-solid fa-sign-out-alt"></i></button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-search">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Buscar despesa...">
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn-icon"><i class="fa-solid fa-bell"></i></button>
+                    <button class="btn-icon"><i class="fa-solid fa-cog"></i></button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Dashboard View -->
+                <div id="view-dashboard" class="content-view active">
+                    <div class="view-header">
+                        <div>
+                            <h1>Dashboard Financeiro</h1>
+                            <p>Resumo de gastos e indicadores do mês</p>
+                        </div>
+                        <div class="header-actions">
+                            <select id="dash-month-filter" class="form-select">
+                                <option value="all">Todos os Meses</option>
+                                <option value="0">Janeiro</option>
+                                <option value="1">Fevereiro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div class="summary-cards">
+                        <div class="card summary-card fade-in">
+                            <div class="card-icon blue"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="card-info">
+                                <h3>Total de Gastos (Mês)</h3>
+                                <p class="h2" id="val-total">R$ 0,00</p>
+                            </div>
+                        </div>
+                        <div class="card summary-card fade-in" style="animation-delay: 0.1s">
+                            <div class="card-icon green"><i class="fa-solid fa-check-circle"></i></div>
+                            <div class="card-info">
+                                <h3>Total Pago</h3>
+                                <p class="h2" id="val-pago">R$ 0,00</p>
+                            </div>
+                        </div>
+                        <div class="card summary-card fade-in" style="animation-delay: 0.2s">
+                            <div class="card-icon yellow"><i class="fa-solid fa-clock"></i></div>
+                            <div class="card-info">
+                                <h3>Total Pendente</h3>
+                                <p class="h2" id="val-pendente">R$ 0,00</p>
+                            </div>
+                        </div>
+                        <div class="card summary-card fade-in" style="animation-delay: 0.3s">
+                            <div class="card-icon red"><i class="fa-solid fa-exclamation-circle"></i></div>
+                            <div class="card-info">
+                                <h3>Total em Atraso</h3>
+                                <p class="h2" id="val-atrasado">R$ 0,00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Area -->
+                    <div class="charts-grid mt-4">
+                        <div class="card fade-in" style="animation-delay: 0.4s">
+                            <div class="card-header">
+                                <h3>Evolução de Gastos (Anual)</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="evolutionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card fade-in" style="animation-delay: 0.5s">
+                            <div class="card-header">
+                                <h3>Gastos por Unidade</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="unitChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-4 fade-in" style="animation-delay: 0.6s">
+                        <div class="card-header">
+                            <h3>Principais Fornecedores</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="supplierChart" style="max-height: 250px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expenses View -->
+                <div id="view-expenses" class="content-view">
+                    <div class="view-header">
+                        <div>
+                            <h1>Gestão de Despesas</h1>
+                            <p>Controle detalhado de todas as contas corporativas</p>
+                        </div>
+                        <div class="header-actions">
+                            <button id="btn-new-expense" class="btn btn-primary action-restricted"><i class="fa-solid fa-plus"></i> Nova Despesa</button>
+                            <div class="export-actions">
+                                <label for="file-import-excel" class="btn btn-outline action-restricted" style="cursor: pointer; margin-bottom: 0;">
+                                    <i class="fa-solid fa-file-import"></i> Importar
+                                    <input type="file" id="file-import-excel" accept=".xlsx, .xls, .csv" style="display: none;">
+                                </label>
+                                <button id="btn-export-excel" class="btn btn-outline"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                                <button id="btn-export-pdf" class="btn btn-outline"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card filters-card mb-4">
+                        <div class="card-body">
+                            <div class="filters-grid">
+                                <div class="filter-group">
+                                    <label>Unidade</label>
+                                    <select id="filter-unidade" class="form-select">
+                                        <option value="">Todas</option>
+                                        <option value="BDM1">BDM1</option>
+                                        <option value="BDM2">BDM2</option>
+                                        <option value="CN1">CN1</option>
+                                        <option value="RB133">RB133</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Situação</label>
+                                    <select id="filter-situacao" class="form-select">
+                                        <option value="">Todas</option>
+                                        <option value="Pago">Pago</option>
+                                        <option value="Pendente">Pendente</option>
+                                        <option value="Atrasado">Atrasado</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Fornecedor</label>
+                                    <input type="text" id="filter-fornecedor" class="form-input" placeholder="Buscar...">
+                                </div>
+                                <div class="filter-group">
+                                    <label>Mês</label>
+                                    <input type="month" id="filter-mes" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card table-card">
+                        <div class="table-responsive">
+                            <table class="table" id="expenses-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nº Nota</th>
+                                        <th>Unidade</th>
+                                        <th>Fornecedor</th>
+                                        <th>Emissão</th>
+                                        <th>Vencimento</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports View -->
+                <div id="view-reports" class="content-view">
+                    <div class="view-header">
+                        <div>
+                            <h1>Faturamento por Unidade</h1>
+                            <p>Análise de resultado por centro de custo</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="reports-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Unidade</th>
+                                            <th>Faturamento Total Estimado</th>
+                                            <th>Gastos Registrados</th>
+                                            <th>Margem Operacional</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Modal Nova Despesa -->
+    <div id="modal-expense" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registrar Despesa</h2>
+                <button class="btn-close"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="expense-form">
+                    <input type="hidden" id="exp-id">
+                    <div class="form-row">
+                        <div class="form-group w-50">
+                            <label>Nº da Nota *</label>
+                            <input type="text" id="exp-nota" required>
+                        </div>
+                        <div class="form-group w-50">
+                            <label>Unidade / Centro de Custo *</label>
+                            <select id="exp-unidade" required>
+                                <option value="BDM1">BDM1</option>
+                                <option value="BDM2">BDM2</option>
+                                <option value="CN1">CN1</option>
+                                <option value="RB133">RB133</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group w-50">
+                            <label>Data do Pedido/Emissão *</label>
+                            <input type="date" id="exp-data-pedido" required>
+                        </div>
+                        <div class="form-group w-50">
+                            <label>Data de Vencimento/Pagto *</label>
+                            <input type="date" id="exp-data-pagto" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group w-50">
+                            <label>Fornecedor *</label>
+                            <input type="text" id="exp-fornecedor" required>
+                        </div>
+                        <div class="form-group w-50">
+                            <label>Valor da Nota (R$) *</label>
+                            <input type="number" id="exp-valor" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group w-50">
+                            <label>Situação *</label>
+                            <select id="exp-situacao" required>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Pago">Pago</option>
+                                <!-- Atrasado is auto-calculated -->
+                            </select>
+                        </div>
+                        <div class="form-group w-50">
+                            <label>Responsável *</label>
+                            <input type="text" id="exp-responsavel" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group w-50">
+                            <label>Sistema de Origem</label>
+                            <input type="text" id="exp-sistema" placeholder="Ex: Linx">
+                        </div>
+                        <div class="form-group w-50">
+                            <label>Multa por Atraso (R$)</label>
+                            <input type="number" id="exp-multa" step="0.01" value="0.00">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Observações</label>
+                        <textarea id="exp-obs" rows="3"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline btn-close-modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Despesa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <script src="js/store.js"></script>
+    <script src="js/components/dashboard.js"></script>
+    <script src="js/components/expenses.js"></script>
+    <script src="js/components/reports.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

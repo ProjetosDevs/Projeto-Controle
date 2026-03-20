@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  role      String   @default("gestor") // admin, financeiro, gestor
+  createdAt DateTime @default(now())
+  expenses  Expense[]
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  nota        String
+  unidade     String
+  dtPedido    String
+  dtPagto     String
+  fornecedor  String
+  valor       Float
+  situacao    String // Pago, Pendente, Atrasado
+  responsavel String
+  sistema     String?
+  multa       Float    @default(0)
+  obs         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+}
