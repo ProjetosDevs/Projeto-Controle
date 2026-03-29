@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useStore, StoreProvider } from './store/StoreContext';
 import { Login } from './components/Login';
+import { Register } from './components/Register';
 import { Dashboard } from './components/Dashboard';
 import { ExpensesList } from './components/ExpensesList';
 import { Reports } from './components/Reports';
@@ -182,8 +183,12 @@ const Topbar = () => {
 const AppContent = () => {
   const { user } = useStore();
   const [currentView, setView] = useState('dashboard');
+  const [authView, setAuthView] = useState<'login' | 'register'>('login');
 
-  if (!user) return <Login />;
+  if (!user) {
+    if (authView === 'login') return <Login onNavigateRegister={() => setAuthView('register')} />;
+    return <Register onNavigateLogin={() => setAuthView('login')} />;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-main">

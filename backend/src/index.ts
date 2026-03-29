@@ -20,6 +20,8 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Controle Financeiro API is running!' });
 });
 
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
