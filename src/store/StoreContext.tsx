@@ -64,7 +64,8 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (credentials: any) => {
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', {
+      const endpoint = credentials.register ? '/api/auth/register' : '/api/auth/login';
+      const res = await fetch(`http://localhost:3000${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)

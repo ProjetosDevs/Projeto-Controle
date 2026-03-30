@@ -12,13 +12,18 @@ async function main() {
     const hashedPassword = await bcrypt.hash('admin123', 10);
     const gestorPassword = await bcrypt.hash('gestor123', 10);
 
+    let defaultCompany = await prisma.company.findUnique({ where: { name: 'FinanceiroCorp' } });
+    if (!defaultCompany) {
+      defaultCompany = await prisma.company.create({ data: { name: 'FinanceiroCorp' } });
+    }
+
     await prisma.user.createMany({
       data: [
-        { username: 'admin', password: hashedPassword, role: 'admin' },
-        { username: 'gestor01', password: gestorPassword, role: 'gestor' }
+        { username: 'admin', password: hashedPassword, role: 'admin', companyId: defaultCompany.id },
+        { username: 'gestor01', password: gestorPassword, role: 'gestor', companyId: defaultCompany.id }
       ]
     });
-    console.log('✅ Usuários "admin" (senha: admin123) e "gestor01" (senha: gestor123) criados.');
+    console.log('✅ Empresa FinanceiroCorp e Usuários "admin" e "gestor01" criados.');
   } else {
     console.log('⚠️ Usuários padrão já existem no banco.');
   }

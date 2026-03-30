@@ -1,6 +1,14 @@
+export interface Company {
+  id: string;
+  name: string;
+}
+
 export interface User {
+  id: string;
   username: string;
   role: 'admin' | 'financeiro' | 'gestor';
+  companyId?: string;
+  company?: Company;
 }
 
 export interface Expense {

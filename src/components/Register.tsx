@@ -7,10 +7,11 @@ export const Register = ({ onNavigateLogin }: { onNavigateLogin?: () => void }) 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'admin' | 'financeiro' | 'gestor'>('admin');
+  const [companyName, setCompanyName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login({ username, password, register: true, role });
+    login({ username, password, register: true, role, companyName });
   };
 
   return (
@@ -30,6 +31,18 @@ export const Register = ({ onNavigateLogin }: { onNavigateLogin?: () => void }) 
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+            <div>
+              <label className="block text-[13px] font-semibold text-text-muted uppercase tracking-wider mb-2">Empresa</label>
+              <input
+                type="text"
+                required
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Nome da sua Empresa..."
+                className="w-full bg-black/40 border border-border/50 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-accent focus:bg-black/60 transition-all shadow-inner"
+              />
+            </div>
+
             <div>
               <label className="block text-[13px] font-semibold text-text-muted uppercase tracking-wider mb-2">Usuário</label>
               <input
